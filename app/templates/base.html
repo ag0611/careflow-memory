@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}CareFlow Memory{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/app.css">
+<script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+</head><body>
+<aside class="side">
+  <div class="brand">CareFlow<span>Memory</span></div>
+  <nav>
+    {% for key, href, label in [("today","/","Today"),("chat","/chat","Ask"),("handover","/handover","Handover"),("memory","/memory","Memory"),("audit","/audit","Audit trail"),("settings","/settings","Models")] %}
+    <a href="{{ href }}" class="{{ 'on' if page == key }}">{{ label }}</a>{% endfor %}
+  </nav>
+  <form method="post" action="/role" class="role">
+    <label for="role">Working as</label>
+    <select id="role" name="role" onchange="this.form.submit()">
+      {% for r in roles %}<option {{ 'selected' if r == role }}>{{ r }}</option>{% endfor %}
+    </select>
+  </form>
+  <div class="mode {{ mode }}">{{ 'Nemotron on Nebius Token Factory' if mode == 'live' else 'Offline demo mode, no API key' }}</div>
+</aside>
+<div class="main">
+  <main>{% block content %}{% endblock %}</main>
+  <footer class="legal"><span class="tag blue">Synthetic data</span><span>Administrative assistant, no medical advice</span></footer>
+</div>
+</body></html>

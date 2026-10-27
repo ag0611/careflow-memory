@@ -1,0 +1,10 @@
+{% macro badge(b) %}<span class="tag {{ b[1] }}">{{ b[0] }}</span>{% endmacro %}
+{% macro row(i) %}
+<li class="row {{ 'r-red' if i.overdue else 'r-amber' if i.stuck else 'r-green' if i.closed else '' }}">
+  <span class="rid">{{ i.id }}</span>
+  <div class="rmain"><strong>{{ i.title }}</strong>
+    <span class="sub"><span>{{ i.patient }}</span><span>{{ i.dept }}</span><span>{{ i.status }}</span>{% if i.due %}<span>Due {{ i.due }}</span>{% endif %}</span></div>
+  <div class="rtags">{% for b in i.badges %}{{ badge(b) }}{% endfor %}</div>
+  <a class="quiet" href="/audit?q={{ i.id }}">History</a>
+</li>
+{% endmacro %}

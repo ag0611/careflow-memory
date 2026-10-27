@@ -1,0 +1,3 @@
+{% if cancelled %}<div class="card done"><p>Cancelled. Nothing was changed.</p></div>
+{% elif done %}<div class="card done ok"><p><strong>Saved.</strong> {{ done.title }}: {{ done.proposed }}. Logged in the audit trail as <a href="/audit#a{{ done.audit_seq }}">entry {{ done.audit_seq }}</a>.</p></div>
+{% else %}<div class="card done"><p>This proposal was already handled.</p></div>{% endif %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Memory · CareFlow Memory{% endblock %}
+{% block content %}
+<header class="head"><h1>Memory</h1><p class="lede">Notes the assistant remembers across sessions. They are treated as data, never as instructions. Edit or delete any note.</p></header>
+{% for n in notes %}
+<article class="note-card"><div><b>{{ n.patient }}</b> <span class="sub"><span>NOTE-{{ n.id }}</span><span>{{ n.author }}</span><span>{{ n.created_at[:10] }}</span></span>
+  <p>{{ n.text }}</p></div>
+  <details><summary class="quiet">Edit</summary>
+    <form method="post" action="/memory/{{ n.id }}/edit"><input name="text" value="{{ n.text }}" maxlength="300" aria-label="Note text"><button class="btn">Save</button></form></details>
+  <form method="post" action="/memory/{{ n.id }}/delete" onsubmit="return confirm('Delete this note?')"><button class="btn ghost">Delete</button></form></article>
+{% else %}<div class="empty"><h2>No notes saved</h2><p>In <a href="/chat">Ask</a>, say "Remember that Meera Iyer prefers evening calls", then confirm.</p></div>{% endfor %}
+{% endblock %}

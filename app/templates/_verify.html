@@ -1,0 +1,2 @@
+{% if v.ok %}<p class="msg ok">Integrity check passed. {{ v.checked }} entries verified, no gaps or edits.</p>
+{% else %}<p class="msg err">Integrity check failed at entry {{ v.broken_seq }}. {{ v.checked }} earlier entries are intact. That entry or its successors were altered.</p>{% endif %}

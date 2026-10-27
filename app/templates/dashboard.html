@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% from "macros.html" import row %}
+{% block title %}Today · CareFlow Memory{% endblock %}
+{% block content %}
+<header class="head"><h1>Today</h1><p class="lede">{{ today.strftime('%A, %d %B %Y') }}. Most urgent first.</p></header>
+<div class="stats">
+  <a href="/?f=all" class="{{ 'on' if f=='all' }}"><b>{{ c.open }}</b>open</a>
+  <a href="/?f=overdue" class="red {{ 'on' if f=='overdue' }}"><b>{{ c.overdue }}</b>overdue</a>
+  <a href="/?f=stuck" class="amber {{ 'on' if f=='stuck' }}"><b>{{ c.stuck }}</b>stuck referrals</a>
+  <a href="/?f=reports" class="{{ 'on' if f=='reports' }}"><b>{{ c.awaited }}</b>reports awaited</a>
+</div>
+{% if open_ %}<ul class="ledger">{% for i in open_ %}{{ row(i) }}{% endfor %}</ul>
+{% else %}<div class="empty"><h2>Nothing open here</h2><p>No open items match this filter. <a href="/?f=all">Show everything open</a>.</p></div>{% endif %}
+{% if closed and f == 'all' %}<h2 class="sect">Recently closed</h2><ul class="ledger">{% for i in closed %}{{ row(i) }}{% endfor %}</ul>{% endif %}
+{% endblock %}

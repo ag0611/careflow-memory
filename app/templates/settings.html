@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Models · CareFlow Memory{% endblock %}
+{% block content %}
+<header class="head"><h1>Models</h1><p class="lede">Each task goes to the smallest Nemotron model that does it well. Every call is measured.</p></header>
+<p class="metaline">Mode: <b>{{ mode }}</b>. Endpoint: {{ base_url }}</p>
+<h2 class="sect">Routing</h2>
+<div class="scroll"><table><thead><tr><th>Task</th><th>Tier</th><th>Model ID</th></tr></thead><tbody>
+{% for t, tier, m in routes %}<tr><td>{{ t }}</td><td>{{ tier|title }}</td><td>{{ m }}</td></tr>{% endfor %}</tbody></table></div>
+<h2 class="sect">Measured on this server</h2>
+{% if stats %}<div class="scroll"><table><thead><tr><th>Tier</th><th>Model</th><th>Calls</th><th>Avg latency</th><th>Tokens</th></tr></thead><tbody>
+{% for s in stats %}<tr><td>{{ s.tier|title }}</td><td>{{ s.model }}</td><td>{{ s.calls }}</td><td>{{ s.avg_ms }} ms</td><td>{{ s.tokens }}</td></tr>{% endfor %}</tbody></table></div>
+{% else %}<p class="none">No model calls recorded yet. {% if mode == 'offline' %}Add NEBIUS_API_KEY to .env to run live.{% else %}Ask a question or generate a handover.{% endif %}</p>{% endif %}
+<h2 class="sect">Ultra versus Super</h2>
+<p>Runs the same handover on both tiers and records the numbers for the README and FEEDBACK.md.</p>
+<button class="btn" hx-post="/settings/benchmark" hx-target="#bench" hx-indicator="#bb">Run comparison</button><span id="bb" class="htmx-indicator">Running…</span>
+<div id="bench"></div>
+{% if role == 'Admin' %}<h2 class="sect">Demo controls</h2>
+<form method="post" action="/admin/reset" onsubmit="return confirm('Reset all demo data, notes and the audit trail?')"><button class="btn ghost">Reset demo data</button></form>{% endif %}
+{% endblock %}

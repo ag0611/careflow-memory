@@ -1,0 +1,11 @@
+<div class="bubble user">{{ user }}</div>
+<div class="bubble ai {{ r.kind }}">
+  <p class="body">{{ r.text | cite }}</p>
+  {% if r.proposal %}{% set p = r.proposal %}
+  <div class="card" id="p-{{ p.id }}"><h3>{{ p.title }}</h3>
+    <dl><dt>Current</dt><dd>{{ p.current }}</dd><dt>Proposed</dt><dd>{{ p.proposed }}</dd><dt>Reason</dt><dd>{{ p.reason }}</dd></dl>
+    <div class="actions">
+      <button class="btn" hx-post="/proposals/{{ p.id }}/confirm" hx-target="#p-{{ p.id }}" hx-swap="outerHTML">Confirm</button>
+      <button class="btn ghost" hx-post="/proposals/{{ p.id }}/cancel" hx-target="#p-{{ p.id }}" hx-swap="outerHTML">Cancel</button></div></div>{% endif %}
+  {% if r.meta %}<p class="meta">{{ r.meta.label }}{% if r.meta.note %}. {{ r.meta.note }}{% endif %}</p>{% endif %}
+</div>

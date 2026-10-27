@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Audit trail · CareFlow Memory{% endblock %}
+{% block content %}
+<header class="head"><h1>Audit trail</h1><p class="lede">Every read, write and AI suggestion. Each entry is chained to the one before it with SHA-256.</p></header>
+<div class="toolbar">
+  <form method="get"><input name="q" value="{{ q }}" placeholder="Search by record, person or action" aria-label="Search audit trail"><button class="btn">Search</button></form>
+  <button class="btn ghost" hx-post="/audit/verify" hx-target="#verify">Verify integrity</button>
+  <button class="btn ghost" hx-post="/audit/tamper" hx-target="#verify" hx-confirm="Edit a past entry directly in the database to test the check? Admin only.">Run tamper demo</button>
+</div>
+<div id="verify" aria-live="polite"></div>
+{% if rows %}<div class="scroll"><table><thead><tr><th>#</th><th>Time (UTC)</th><th>Actor</th><th>Action</th><th>Record</th><th>Before</th><th>After</th><th>AI</th><th>Hash</th></tr></thead><tbody>
+{% for r in rows %}<tr id="a{{ r.seq }}"><td>{{ r.seq }}</td><td>{{ r.ts.replace('T',' ')[:19] }}</td><td>{{ r.actor }}</td><td>{{ r.action }}</td><td>{{ r.target }}</td><td>{{ r.before }}</td><td>{{ r.after }}</td><td>{% if r.ai %}<span class="tag blue">AI</span>{% endif %}</td><td class="hash">{{ r.hash[:10] }}</td></tr>{% endfor %}
+</tbody></table></div>
+{% else %}<div class="empty"><h2>No entries found</h2><p>Try a record ID such as REF-003, or <a href="/audit">clear the search</a>.</p></div>{% endif %}
+{% endblock %}

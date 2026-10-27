@@ -1,0 +1,32 @@
+{% extends "base.html" %}{% from "macros.html" import row %}
+{% block title %}Handover · CareFlow Memory{% endblock %}
+{% block content %}
+<header class="head"><h1>Shift handover</h1><p class="lede">Built from the live record state, with what changed since the last shift.</p>
+  <form method="post" action="/handover/generate"><button class="btn">Generate handover</button></form></header>
+{% if not h %}<div class="empty"><h2>No handover yet</h2><p>Generate one to see critical items and changes since the last shift.</p></div>
+{% else %}{% set b = h.body %}{% set d = b.diff %}
+<p class="metaline">HO-{{ h.id }}, by {{ h.author }}, generated in {{ '%.1f' % (h.latency_ms/1000) }}s. {{ h.model }}. {% if h.signed %}<span class="tag green">Signed</span>{% else %}<span class="tag amber">Draft</span>{% endif %}
+  <a class="quiet" href="/handover/{{ h.id }}/export.md">Export Markdown</a></p>
+<form method="post" action="/handover/{{ h.id }}/sign" class="narr">
+  <label for="narrative">Summary</label>
+  <textarea id="narrative" name="narrative" rows="5" {{ 'readonly' if h.signed }}>{{ b.narrative }}</textarea>
+  {% if not h.signed %}<button class="btn">Sign and save</button>{% endif %}
+</form>
+<section class="diff"><h2>Since the last shift</h2>
+  {% if not d.baseline %}<p>This is the first handover, so there is nothing to compare.</p>
+  {% elif not (d.new or d.resolved or d.changed or d.newly_overdue or d.newly_stuck) %}<p>No changes.</p>
+  {% else %}<ul>
+    {% for i in d.new %}<li class="plus"><b>New</b> {{ i }} {{ h.by[i].title }}</li>{% endfor %}
+    {% for i in d.resolved %}<li class="minus"><b>Resolved</b> {{ i }} {{ h.by[i].title }}</li>{% endfor %}
+    {% for i, a, c in d.changed %}<li class="chg"><b>Changed</b> {{ i }} {{ a }} to {{ c }}</li>{% endfor %}
+    {% for i in d.newly_overdue %}<li class="warn"><b>Now overdue</b> {{ i }} {{ h.by[i].title }}</li>{% endfor %}
+    {% for i in d.newly_stuck %}<li class="warn"><b>Now stuck</b> {{ i }} {{ h.by[i].title }}</li>{% endfor %}
+  </ul>{% endif %}</section>
+{% for key, title in [("critical","Critical"),("watch","Watch list"),("pending","Pending"),("completed","Completed")] %}
+<h2 class="sect">{{ title }} <small>{{ h.view[key]|length }}</small></h2>
+{% if h.view[key] %}<ul class="ledger">{% for i in h.view[key] %}{{ row(i) }}{% endfor %}</ul>{% else %}<p class="none">None.</p>{% endif %}{% endfor %}
+<h2 class="sect">New notes <small>{{ h.view.notes|length }}</small></h2>
+{% for n in h.view.notes %}<p class="note"><b>{{ n.patient }}</b> {{ n.text }}</p>{% else %}<p class="none">None.</p>{% endfor %}
+{% endif %}
+{% if history|length > 1 %}<h2 class="sect">Earlier handovers</h2><p>{% for x in history %}<a class="quiet" href="/handover?id={{ x.id }}">HO-{{ x.id }}</a> {% endfor %}</p>{% endif %}
+{% endblock %}

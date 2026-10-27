@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Ask · CareFlow Memory{% endblock %}
+{% block content %}
+<header class="head"><h1>Ask CareFlow</h1><p class="lede">Answers come from your records and saved notes, and cite their sources. Changes need your confirmation.</p></header>
+<div id="thread" class="thread" aria-live="polite">
+  <div class="empty-chat"><p>Try one of these.</p>
+    {% for s in ["What is overdue in Cardiology?","Which referrals are stuck?","Remember that Meera Iyer prefers evening calls","How should I contact Meera Iyer?","Mark REF-003 as scheduled","Who changed REF-002?","What dose should Arjun Deshmukh take?"] %}
+    <button type="button" class="chip" onclick="ask(this.textContent)">{{ s }}</button>{% endfor %}</div>
+</div>
+<form class="ask" hx-post="/chat" hx-target="#thread" hx-swap="beforeend" hx-indicator="#busy" hx-on::after-request="this.reset();document.querySelector('.empty-chat')?.remove();window.scrollTo(0,document.body.scrollHeight)">
+  <input name="message" id="msg" maxlength="500" placeholder="Ask about tasks, referrals, follow-ups or reports" autocomplete="off" required>
+  <button class="btn">Send</button><span id="busy" class="htmx-indicator">Thinking…</span>
+</form>
+<p class="hint"><a href="/chat">Start a new session</a>. Saved notes persist across sessions.</p>
+<script>function ask(t){const m=document.getElementById('msg');m.value=t;m.form.requestSubmit();}</script>
+{% endblock %}

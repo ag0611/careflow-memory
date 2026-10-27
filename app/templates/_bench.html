@@ -1,0 +1,3 @@
+{% if mode == 'offline' %}<p class="msg err">Offline mode: no model was called. Set NEBIUS_API_KEY to measure Ultra and Super.</p>
+{% else %}<div class="scroll"><table><thead><tr><th>Tier</th><th>Model</th><th>Latency</th><th>Tokens</th><th>Result</th></tr></thead><tbody>
+{% for b in bench %}<tr><td>{{ b.tier|title }}</td><td>{{ b.model }}</td><td>{{ '%.1f' % (b.ms/1000) }} s</td><td>{{ b.tokens }}</td><td>{{ 'ok' if b.ok else 'failed' }}{{ ', fell back' if b.fell_back }}</td></tr>{% endfor %}</tbody></table></div>{% endif %}
